@@ -12,7 +12,7 @@
                     <Link class="text-dark" :href="route('todo.index')"> Accueil </Link>
                 </li>
                 <li v-if="$page.props.auth.user" class="nav-item">
-                    <Link class="text-dark" :href="route('dashboard')"> Logout </Link>
+                    <button @click="logout" class="text-dark"> Logout </button>
                 </li>
                 <li v-if="!$page.props.auth.user" class="nav-item">
                     <Link class="text-dark" :href="route('login')"> Login </Link>
@@ -26,5 +26,19 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
+
+
+const logout = () => {
+    router.post(route('logout'), {}, {
+        onSuccess: () => {
+            alert('Vous avez été déconnecté');
+        },
+        onError: (errors) => {
+            console.error('Erreur lors de la déconnexion:', errors);
+            alert('Erreur lors de la déconnexion. Veuillez réessayer.');
+        }
+    });
+};
+
 </script>

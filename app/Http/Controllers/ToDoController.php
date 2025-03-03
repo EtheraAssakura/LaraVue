@@ -40,13 +40,11 @@ class ToDoController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'more_info' => 'required|string|max:255',
-            'statut' => 'required|string'
         ]);
 
         ToDo::create([
             'title' => $request->title,
             'more_info' => $request->more_info,
-            'statut' => $request->statut,
             'user_id' => auth()->id(),
         ]);
 
@@ -80,12 +78,14 @@ class ToDoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'string|max:255'
+            'more_info' => 'string|max:255',
+            'statut' => 'required|string'
         ]);
 
         $todo->update([
             'title' => $request->title,
             'more_info' => $request->more_info,
+            'statut' => $request->statut,
         ]);
 
         return redirect()->to('/todo')->with('message','Tache mise à jour');
@@ -94,8 +94,12 @@ class ToDoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ToDo $todo)
+    public function destroy(Request $request, ToDo $todo)
     {
+        if ($todo->statut !== 'termine') {
+            return redirect()->back()->with('message', 'Seules les tâches terminées peuvent être supprimées.');
+        }
+
         $todo->delete();
         return redirect()->to('/todo')->with('message','Tache supprimer de la liste');
         
