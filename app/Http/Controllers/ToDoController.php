@@ -16,7 +16,9 @@ class ToDoController extends Controller
      */
     public function index()
     {
-        $todo = ToDo::get();
+        $user = auth()->user();
+        $todo = ToDo::where('user_id', $user->id)->get();
+
         return Inertia::render('FrontEnd/Todo/Index', [
             'todo' => $todo
         ]);
@@ -37,12 +39,15 @@ class ToDoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'string|max:255'
+            'more_info' => 'required|string|max:255',
+            'statut' => 'required|string'
         ]);
 
         ToDo::create([
             'title' => $request->title,
             'more_info' => $request->more_info,
+            'statut' => $request->statut,
+            'user_id' => auth()->id(),
         ]);
 
         return redirect()->to('/todo')->with('message','Tache ajoutée à la liste');

@@ -1,6 +1,6 @@
 <template>
     <FrontEnd>
-        <Head title="" />
+        <Head title="Modifié une tache" />
         <div class="mt-4 mx-4">
             <div class="flex justify-between">
                 <h2>Modifié la tache :</h2>

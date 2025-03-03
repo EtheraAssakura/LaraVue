@@ -1,6 +1,6 @@
 <template>
     <FrontEnd>
-        <Head title="" />
+        <Head title="Creer une tache" />
         <div class="mt-4 mx-4">
             <div class="flex justify-between">
                 <h2>Ajouter une tache :</h2>
@@ -24,6 +24,7 @@
                             <textarea v-model="form.more_info" class="py-1 w-full"></textarea>
                             <div v-if="errors.more_info">{{ errors.more_info }}</div>
                         </div>
+                            <input type="hidden" v-model="form.statut">
                         <Link 
                             :href="route('todo.index')"
                             class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block"
@@ -55,6 +56,7 @@ defineProps({
 const form = useForm({
     title: "",
     more_info: "",
+    statut: "",
 });
 
 const saveTodo = () => {

@@ -1,5 +1,5 @@
 <template>
-    <Head title="" />
+    <Head title="Home" />
     <FrontEnd>
 
         <div v-if="$page.props.flash.message" class="edit mt-4 mx-5 px-4 py-2">
@@ -26,6 +26,7 @@
                     >
                         {{ item.title }}
                     </Link>
+                    / {{ item.statut }}
                 </li>
                 
             </ul>

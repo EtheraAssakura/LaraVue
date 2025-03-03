@@ -1,6 +1,6 @@
 <template>
     <FrontEnd>
-        <Head title="" />
+        <Head title="Tache" />
         <div class="mt-4 mx-4">
             <div class="flex justify-between">
                 <h2>{{ todo.title }}</h2>
