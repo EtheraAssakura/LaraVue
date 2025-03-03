@@ -1,8 +1,7 @@
 <template>
     <FrontEnd>
         <Head title="" />
-        <h1>Hello index</h1>
-
+        <h1>Detail de ma tache</h1>
     </FrontEnd>
 </template>
 
