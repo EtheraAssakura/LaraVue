@@ -1,12 +1,15 @@
 <template>
     <FrontEnd>
         <Head title="" />
-        <h1>Hello index</h1>
-
+        <Link 
+            :href="route('todo.index')"
+        >
+            Direction la todo
+        </Link>
     </FrontEnd>
 </template>
 
 <script setup>
 import FrontEnd from '@/Layouts/FrontEndLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 </script>
