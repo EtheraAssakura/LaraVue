@@ -1,2 +1,3 @@
 # LaraVue
-Laravel Vue.js  API REST
+
+Laravel Vue.js API REST
