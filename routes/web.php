@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\ToDoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [FrontEndController::class, 'index'])->name('index');
 Route::get('/detail', [FrontEndController::class, 'detail'])->name('detail');
+
+Route::resource('/todo', ToDoController::class);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
