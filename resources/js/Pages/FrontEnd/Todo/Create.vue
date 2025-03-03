@@ -1,13 +1,11 @@
 <template>
+    <Head title="Creer une tache" />
     <FrontEnd>
-        <Head title="" />
+
         <div class="mt-4 mx-4">
             <div class="flex justify-between">
                 <h2>Ajouter une tache :</h2>
-                <Link 
-                    :href="route('todo.index')"
-                    class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block"
-                >
+                <Link :href="route('todo.index')" class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block">
                     Retour
                 </Link>
             </div>
@@ -24,18 +22,15 @@
                             <textarea v-model="form.more_info" class="py-1 w-full"></textarea>
                             <div v-if="errors.more_info">{{ errors.more_info }}</div>
                         </div>
-                        <Link 
-                            :href="route('todo.index')"
-                            class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block"
-                        >
-                            Retour
-                        </Link>
-                        <button
+                            <button
                             type="submit"
                             class="bg-blue-500 text-dark py-2 px-5 rounded mb-4"
-                        >
+                            >
                             Save
                         </button>
+                        <Link :href="route('todo.index')" class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block">
+                            Retour
+                        </Link>
                     </div>
                 </div>
             </form>
@@ -55,6 +50,7 @@ defineProps({
 const form = useForm({
     title: "",
     more_info: "",
+    statut: "",
 });
 
 const saveTodo = () => {
