@@ -43,6 +43,15 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label>Tags</label>
+                            <input
+                                v-model="form.tags"
+                                type="text"
+                                class="py-1 w-full"
+                                placeholder="Séparez les tags par des virgules"
+                            >
+                        </div>
                         <button
                             type="submit"
                             class="bg-blue-500 text-dark py-2 px-5 rounded mb-4"
@@ -74,7 +83,9 @@ const form = useForm({
     title: props.todo.title,
     more_info: props.todo.more_info,
     statut: props.todo.statut,
+    tags: props.todo.tags.map(tags => tags.name.en).join(', '),
 });
+
 
 const updateTodo = () => {
 

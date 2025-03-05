@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Tags\HasTags;
 
-class ToDo extends Model
+class ToDoItem extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Hastags;
 
     protected $fillable = [
         'title',

@@ -20,6 +20,10 @@
             </div>
             <p>{{ todo.more_info }}</p>
             <p>{{ todo.statut }}</p>
+            <ul>
+                <li>Tags :</li>
+                <li v-for="tag in todo.tags" :key="tag.id">{{ tag.name.en }}</li>
+            </ul>
             <br>
             <Link
                 :href="route('todo.edit', todo.id)"

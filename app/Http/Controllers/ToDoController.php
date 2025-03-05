@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ToDoItem;
+use Spatie\Tags\Tag;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,9 +15,9 @@ class ToDoController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $todo = ToDoItem::where('user_id', $user->id)->get();
+        $todo = ToDoItem::where('user_id', $user->id)->orderBy('created_at', 'asc')->get();
 
-        return Inertia::render('FrontEnd/Todo/Index', [
+        return Inertia::render('FrontEnd/Todo/IndexTodo', [
             'todo' => $todo,
         ]);
     }
@@ -26,7 +27,8 @@ class ToDoController extends Controller
      */
     public function create()
     {
-        return Inertia::render('FrontEnd/Todo/Create');
+
+        return Inertia::render('FrontEnd/Todo/CreateTodoItem');
     }
 
     /**
@@ -36,14 +38,29 @@ class ToDoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'required|string|max:255',
+            'more_info' => 'nullable|string|max:255',
+            'tag' => 'nullable|string|max:255',
         ]);
 
-        ToDoItem::create([
+        $todo = ToDoItem::create([
             'title' => $request->title,
             'more_info' => $request->more_info,
             'user_id' => auth()->id(),
         ]);
+
+        if ($request->has('tags') && $request->tags) {
+            
+            $tag_explo = explode(',',$request->tags);
+
+            $trimed_tag = array_map('trim', $tag_explo);
+
+            foreach($trimed_tag as $tag){
+                $tags = Tag::findOrCreate($tag);
+            
+                $todo->attachTag($tags);
+            }
+            
+        }
 
         return redirect()->to('/todo')->with('message', 'Tache ajoutée à la liste');
     }
@@ -51,9 +68,12 @@ class ToDoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Todo $todo)
+    public function show(TodoItem $todo)
     {
-        return Inertia::render('FrontEnd/Todo/Detail', [
+
+        $todo->load('tags');
+
+        return Inertia::render('FrontEnd/Todo/DetailTodoItem', [
             'todo' => $todo,
         ]);
     }
@@ -61,9 +81,11 @@ class ToDoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ToDo $todo)
+    public function edit(ToDoItem $todo)
     {
-        return Inertia::render('FrontEnd/Todo/Update', [
+        $todo->load('tags');
+
+        return Inertia::render('FrontEnd/Todo/UpdateTodoItem', [
             'todo' => $todo,
         ]);
     }
@@ -75,8 +97,9 @@ class ToDoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'string|max:255',
+            'more_info' => 'nullable|string|max:255',
             'statut' => 'required|string',
+            'tag' => 'nullable|string|max:255',
         ]);
 
         $todo->update([
@@ -84,6 +107,17 @@ class ToDoController extends Controller
             'more_info' => $request->more_info,
             'statut' => $request->statut,
         ]);
+
+        if ($request->has('tags') && $request->tags) {
+            
+            $tag_explo = explode(',',$request->tags);
+
+            $trimed_tags = array_map('trim', $tag_explo);
+
+            $tags = array_map(fn($tag) => Tag::findOrCreate($tag), $trimed_tags);
+            
+            $todo->syncTags($tags);
+        }
 
         return redirect()->to('/todo')->with('message', 'Tache mise à jour');
     }

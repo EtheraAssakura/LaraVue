@@ -35,6 +35,18 @@
                                 {{ errors.more_info }}
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label>Tags</label>
+                            <input
+                                v-model="form.tags"
+                                type="text"
+                                class="py-1 w-full"
+                                placeholder="Séparer les tags par une virgule"
+                            >
+                            <div v-if="errors.tags">
+                                {{ errors.tags }}
+                            </div>
+                        </div>
                         <button
                             type="submit"
                             class="bg-blue-500 text-dark py-2 px-5 rounded mb-4"
@@ -66,6 +78,7 @@ const form = useForm({
     title: "",
     more_info: "",
     statut: "",
+    tags: "",
 });
 
 const saveTodo = () => {
