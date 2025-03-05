@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ToDoItem;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-use App\Models\ToDo;
 
 class ToDoController extends Controller
 {
@@ -17,10 +14,10 @@ class ToDoController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $todo = ToDo::where('user_id', $user->id)->get();
+        $todo = ToDoItem::where('user_id', $user->id)->get();
 
         return Inertia::render('FrontEnd/Todo/Index', [
-            'todo' => $todo
+            'todo' => $todo,
         ]);
     }
 
@@ -42,13 +39,13 @@ class ToDoController extends Controller
             'more_info' => 'required|string|max:255',
         ]);
 
-        ToDo::create([
+        ToDoItem::create([
             'title' => $request->title,
             'more_info' => $request->more_info,
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->to('/todo')->with('message','Tache ajoutée à la liste');
+        return redirect()->to('/todo')->with('message', 'Tache ajoutée à la liste');
     }
 
     /**
@@ -57,7 +54,7 @@ class ToDoController extends Controller
     public function show(Todo $todo)
     {
         return Inertia::render('FrontEnd/Todo/Detail', [
-            'todo' => $todo
+            'todo' => $todo,
         ]);
     }
 
@@ -67,19 +64,19 @@ class ToDoController extends Controller
     public function edit(ToDo $todo)
     {
         return Inertia::render('FrontEnd/Todo/Update', [
-            'todo' => $todo
+            'todo' => $todo,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ToDo $todo)
+    public function update(Request $request, ToDoItem $todo)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'more_info' => 'string|max:255',
-            'statut' => 'required|string'
+            'statut' => 'required|string',
         ]);
 
         $todo->update([
@@ -88,20 +85,21 @@ class ToDoController extends Controller
             'statut' => $request->statut,
         ]);
 
-        return redirect()->to('/todo')->with('message','Tache mise à jour');
+        return redirect()->to('/todo')->with('message', 'Tache mise à jour');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, ToDo $todo)
+    public function destroy(Request $request, ToDoItem $todo)
     {
         if ($todo->statut !== 'termine') {
             return redirect()->back()->with('message', 'Seules les tâches terminées peuvent être supprimées.');
         }
 
         $todo->delete();
-        return redirect()->to('/todo')->with('message','Tache supprimer de la liste');
-        
+
+        return redirect()->to('/todo')->with('message', 'Tache supprimer de la liste');
+
     }
 }
