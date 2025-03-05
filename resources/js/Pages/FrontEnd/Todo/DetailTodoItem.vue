@@ -1,29 +1,43 @@
 <template>
     <Head title="Tache" />
     <FrontEnd>
-
-        <div v-if="$page.props.flash.message" class="bg-red-500 mt-4 mx-5 px-4 py-2">
+        <div
+            v-if="$page.props.flash.message"
+            class="bg-red-500 mt-4 mx-5 px-4 py-2"
+        >
             {{ $page.props.flash.message }}
         </div>
 
         <div class="mt-4 mx-4">
             <div class="flex justify-between">
                 <h2>{{ todo.title }}</h2>
-                <Link :href="route('todo.index')" class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block">
+                <Link
+                    :href="route('todo.index')"
+                    class="bg-red-500 text-dark py-2 px-5 rounded mb-4 inline-block"
+                >
                     Retour
                 </Link>
             </div>
             <p>{{ todo.more_info }}</p>
             <p>{{ todo.statut }}</p>
+            <ul>
+                <li>Tags :</li>
+                <li v-for="tag in todo.tags" :key="tag.id">{{ tag.name.en }}</li>
+            </ul>
             <br>
-            <Link :href="route('todo.edit', todo.id)" class="edit text-white py-2 px-5 rounded inline-block">
+            <Link
+                :href="route('todo.edit', todo.id)"
+                class="edit text-white py-2 px-5 rounded inline-block"
+            >
                 Edit
             </Link>
-            <button @click="deleteTodo(todo.id)" class="bg-red-500 py-2 px-5 rounded">
+            <button
+                class="bg-red-500 py-2 px-5 rounded"
+                @click="deleteTodo(todo.id)"
+            >
                 Delete
             </button>
         </div>
-
     </FrontEnd>
 </template>
 

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ToDoItem;
+use Spatie\Tags\Tag;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-use App\Models\ToDo;
 
 class ToDoController extends Controller
 {
@@ -17,10 +15,10 @@ class ToDoController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $todo = ToDo::where('user_id', $user->id)->get();
+        $todo = ToDoItem::where('user_id', $user->id)->orderBy('created_at', 'asc')->get();
 
-        return Inertia::render('FrontEnd/Todo/Index', [
-            'todo' => $todo
+        return Inertia::render('FrontEnd/Todo/IndexTodo', [
+            'todo' => $todo,
         ]);
     }
 
@@ -29,7 +27,8 @@ class ToDoController extends Controller
      */
     public function create()
     {
-        return Inertia::render('FrontEnd/Todo/Create');
+
+        return Inertia::render('FrontEnd/Todo/CreateTodoItem');
     }
 
     /**
@@ -39,47 +38,68 @@ class ToDoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'required|string|max:255',
+            'more_info' => 'nullable|string|max:255',
+            'tag' => 'nullable|string|max:255',
         ]);
 
-        ToDo::create([
+        $todo = ToDoItem::create([
             'title' => $request->title,
             'more_info' => $request->more_info,
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->to('/todo')->with('message','Tache ajoutée à la liste');
+        if ($request->has('tags') && $request->tags) {
+            
+            $tag_explo = explode(',',$request->tags);
+
+            $trimed_tag = array_map('trim', $tag_explo);
+
+            foreach($trimed_tag as $tag){
+                $tags = Tag::findOrCreate($tag);
+            
+                $todo->attachTag($tags);
+            }
+            
+        }
+
+        return redirect()->to('/todo')->with('message', 'Tache ajoutée à la liste');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Todo $todo)
+    public function show(TodoItem $todo)
     {
-        return Inertia::render('FrontEnd/Todo/Detail', [
-            'todo' => $todo
+
+        $todo->load('tags');
+
+        return Inertia::render('FrontEnd/Todo/DetailTodoItem', [
+            'todo' => $todo,
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ToDo $todo)
+    public function edit(ToDoItem $todo)
     {
-        return Inertia::render('FrontEnd/Todo/Update', [
-            'todo' => $todo
+        $todo->load('tags');
+
+        return Inertia::render('FrontEnd/Todo/UpdateTodoItem', [
+            'todo' => $todo,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ToDo $todo)
+    public function update(Request $request, ToDoItem $todo)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'more_info' => 'string|max:255',
-            'statut' => 'required|string'
+            'more_info' => 'nullable|string|max:255',
+            'statut' => 'required|string',
+            'tag' => 'nullable|string|max:255',
         ]);
 
         $todo->update([
@@ -88,20 +108,32 @@ class ToDoController extends Controller
             'statut' => $request->statut,
         ]);
 
-        return redirect()->to('/todo')->with('message','Tache mise à jour');
+        if ($request->has('tags') && $request->tags) {
+            
+            $tag_explo = explode(',',$request->tags);
+
+            $trimed_tags = array_map('trim', $tag_explo);
+
+            $tags = array_map(fn($tag) => Tag::findOrCreate($tag), $trimed_tags);
+            
+            $todo->syncTags($tags);
+        }
+
+        return redirect()->to('/todo')->with('message', 'Tache mise à jour');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, ToDo $todo)
+    public function destroy(Request $request, ToDoItem $todo)
     {
         if ($todo->statut !== 'termine') {
             return redirect()->back()->with('message', 'Seules les tâches terminées peuvent être supprimées.');
         }
 
         $todo->delete();
-        return redirect()->to('/todo')->with('message','Tache supprimer de la liste');
-        
+
+        return redirect()->to('/todo')->with('message', 'Tache supprimer de la liste');
+
     }
 }
